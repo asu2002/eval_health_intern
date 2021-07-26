@@ -1,0 +1,6 @@
+create database if not exists `evaluate_health`;
+use`evaluate_health`;
+show tables ;
+select * from `disease_condition`;
+select * from `disease_detail`;
+select a.`dis_cond_id`,`source_reference_name`,`disease_url`,`sub_heading`,`sub_detail` from `disease_condition` as a,`disease_detail` as b where a.`dis_cond_id` = b.`dis_cond_id` and `sub_heading` = 'Introduction' ;

@@ -1,0 +1,163 @@
+create database if not exists `eh_malacard`;
+use `eh_malacard`;
+
+CREATE TABLE IF NOT EXISTS `eh_malacard`.`disease` 
+(   `disease_id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT 'Primary Key',
+    `disease_name` VARCHAR(500) NOT NULL COMMENT'disease name is unique for each disease',
+    `family_level` VARCHAR(10) NULL COMMENT 'Represents the relation of the disease with the family name',
+    `family_name` VARCHAR(500) NULL COMMENT 'Represents the name of the family related to disease',
+    `summary` TEXT NULL,
+    `summary_link` TEXT NULL,
+    `disease_link` TEXT null,
+    `family_link` TEXT null,
+    `malacard_id` VARCHAR(100) null,
+    `recent_transaction_date` DATETIME NULL,
+	`active_flag` BIT NULL DEFAULT 1 COMMENT '1 for active record and NULL for passive record',
+	PRIMARY KEY (`disease_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `eh_malacard`.`drugs`
+(
+    `drug_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `disease_id` int unsigned  null,
+    `disease_name` Varchar(500),
+    `drug_name` Varchar(500),
+    `status` TEXT  null,
+    `phase` TEXT  null,
+    `cas_number`INT UNSIGNED  NULL,
+    `pub_chem` INT UNSIGNED  NULL,
+    `pubchem_url` TEXT NULL,
+    `recent_transaction_date` DATETIME NULL,
+	`active_flag` BIT NULL DEFAULT 1,
+    PRIMARY KEY(`drug_id`),
+    CONSTRAINT `FK_disease_drug_id` FOREIGN KEY (`disease_id`)
+	REFERENCES `eh_malacard`.`disease`(`disease_id`)
+);
+CREATE TABLE IF NOT EXISTS `eh_malacard`.`externalid`
+(
+    `external_id`BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `disease_id` int unsigned  null,
+    `deasease_name` Varchar(500),
+    `external_id_source` TEXT null,
+    `external_number` INT UNSIGNED null,
+    `external_url` text null,
+    `recent_transaction_date` DATETIME NULL,
+	`active_flag` BIT NULL DEFAULT 1,
+    PRIMARY KEY(`external_id`),
+    CONSTRAINT `FK_External_id` FOREIGN KEY (`disease_id`)
+    REFERENCES `eh_malacard`.`disease`(`disease_id`)
+);
+
+CREATE TABLE `eh_malacard`.`genes`
+(
+ `genes_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+ `disease_id` int unsigned  null,
+ `disease_name` Varchar(500),
+ `symbol` Varchar(500),
+ `symbol_url` TEXT NULL ,
+ `gene_description` TEXT NULL,
+ `category` TEXT NULL,
+ `evidence` TEXT NULL,
+ `evidence_url` TEXT NULL,
+ `pubmed_ids` TEXT NULL,
+ `pubmedids_url` TEXT NULL,
+ PRIMARY KEY(`genes_id`),
+CONSTRAINT `FK_genes_id` FOREIGN KEY (`disease_id`)
+REFERENCES `eh_malacard`.`disease`(`disease_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `eh_malacard`.`pathways`
+(
+    `pathways_id`  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`disease_id` INT UNSIGNED NULL ,
+    `disease_name` VARCHAR(500),
+    `super_pathways` TEXT NULL,
+    `top_affiliating_genes` TEXT NULL,
+     PRIMARY KEY(`pathways_id`),
+CONSTRAINT `FK_disease_pathways_id` FOREIGN KEY (`disease_id`)
+REFERENCES `eh_malacard`.`disease`(`disease_id`)
+
+);
+
+CREATE TABLE IF NOT EXISTS `eh_malacard`.`related_diesease`
+(
+`related_disease_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+`disease_id` INT UNSIGNED  NULL ,
+`disease_name` varchar(500),
+`related_disease` varchar(500),
+`top_affiliating_genes` text null,
+PRIMARY KEY(`related_disease_id`),
+CONSTRAINT `FK_disease_related_disease_id` FOREIGN KEY (`disease_id`)
+REFERENCES `eh_malacard`.`disease`(`disease_id`)
+);
+
+CREATE TABLE IF NOT EXISTS `eh_malacard`.`source_table`
+(
+    `source_id`  BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+	`disease_id` INT UNSIGNED  NULL ,
+    `disease_name` varchar(500),
+    `source_name` text null,
+    `source_url` text null,
+     PRIMARY KEY(`source_id`),
+     CONSTRAINT `FK_disease_source_id` FOREIGN KEY (`disease_id`)
+     REFERENCES `eh_malacard`.`disease`(`disease_id`)
+);
+create table if not exists `eh_malacard`.`clinical_trials`
+(
+
+`clinical_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+`disease_id` INT UNSIGNED  NULL ,
+`disease_name` varchar(500),
+`dose_name` varchar(500),
+`status` varchar(500),
+`nct_id`text null,
+`nct_id_url`text null,
+`phase`varchar(500),
+`drug_name` text null,
+primary key(`clinical_id`),
+constraint `FK_disease_clinical_id` foreign key(`disease_id`)
+references `eh_malacard`.`disease`(`disease_id`)
+);
+
+create table if not exists `eh_malacard`.`symptom_gen`
+(
+`symptom_gen_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+`disease_id` INT UNSIGNED NULL,
+`disease_name` varchar(500),
+`symptom_gen_description` varchar(500),
+`genomernai_source_accession` text null,
+`genomernai_url` text null,
+`top_affiliating_genes` text null,
+`top_affiliating_genes_url` text null,
+primary key(`symptom_gen_id`),
+constraint `FK_disease_symptom_gen_id` foreign key(`disease_id`)
+references `eh_malacard`.`disease`(`disease_id`)
+);
+
+create table if not exists `eh_malacard`.`symptom_hpo`
+(
+`symptom_hpo_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+`disease_id` INT UNSIGNED NULL,
+`disease_name` varchar(500),
+`symptom_hpo_description` varchar(500),
+`hpo_frequency`text null,
+`hpo_source_accession`varchar(500),
+`hpo_source_accession_url` text null,
+primary key(`symptom_hpo_id`),
+constraint `FK_disease_symptom_hpo_id` foreign key(`disease_id`)
+references `eh_malacard`.`disease`(`disease_id`)
+);
+create table if not exists `eh_malacard`.`symptom_mgi`
+(
+`symptom_mgi_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+`disease_id` INT UNSIGNED NULL,
+`disease_name` varchar(500),
+`symptom_mgi_description` varchar(500),
+`mgi_sorce_accession` varchar(500),
+`mgi_source_accession_url` text null,
+`top_affiliating_genes`text null,
+`top_affiliating_genes_url`text null,
+primary key(`symptom_mgi_id`),
+constraint `FK_disease_symptom_mgi_id` foreign key(`disease_id`)
+references `eh_malacard`.`disease`(`disease_id`)
+);

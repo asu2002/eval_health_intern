@@ -1,0 +1,42 @@
+from typing import Sequence
+import mysql.connector 
+import pandas as pd
+from mysql.connector import Error 
+
+df = pd.read_csv (r'C:\Users\balaj\Desktop\ExternalID.csv')   
+print (df)
+df_list = df.values.tolist()
+
+df_list = df_list[0:10]
+print(df_list)
+
+
+
+try:
+    conn = mysql.connector.connect(
+        host='localhost', 
+        database='eh_malacard', 
+        user='root', 
+        password='aashikidoni@24')
+    if conn.is_connected():
+        cursor = conn.cursor()
+        #cursor.execute("select database();")
+        #record = cursor.fetchone()
+       
+
+        #cursor.execute("CREATE TABLE if not exists ExternalID_data(disease_Name varchar(500),externalID_Source varchar(500),externalID_Number text null,externalID_URL varchar(500))")
+        #print("Table is created....")
+        
+        
+        for i in df_list:
+            print(list(i))
+            
+            sql = "INSERT INTO external_id  (`deasease_name`,`external_id_source`,`external_number`,`external_url`) VALUES (%s,%s,%s,%s)"
+            cursor.execute(sql, tuple(i))
+            print("Record inserted")
+            
+            conn.commit()
+            cursor.reset()
+            
+except Error as e:
+            print("Error while connecting to MySQL", e)

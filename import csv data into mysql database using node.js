@@ -29,8 +29,8 @@ function importCsvData2MySQL(filename) {
             const connection = mysql.createConnection({
                 host: 'localhost',
                 user: 'root',
-                password: 'Asutosh@2002',
-                database: 'eh_malacard'
+                password: 'password',
+                database: 'database_name'
             });
             console.log(connection);
 
